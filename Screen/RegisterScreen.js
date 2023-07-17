@@ -17,6 +17,8 @@ import {
 
 import Loader from './Components/Loader';
 
+import { server } from '../Config/config';
+
 const RegisterScreen = (props) => {
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
@@ -74,7 +76,7 @@ const RegisterScreen = (props) => {
     }
     formBody = formBody.join('&');
 
-    fetch('http://192.168.1.14:3000/api/user/register', {
+    fetch(server, {
       method: 'POST',
       body: formBody,
       headers: {

@@ -18,6 +18,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Loader from './Components/Loader';
+import { server } from '../Config/config';
 
 const LoginScreen = ({navigation}) => {
   const [userEmail, setUserEmail] = useState('');
@@ -47,7 +48,7 @@ const LoginScreen = ({navigation}) => {
     }
     formBody = formBody.join('&');
 
-    fetch('http://192.168.1.14:3000/api/user/login', {
+    fetch(server, {
       method: 'POST',
       body: formBody,
       headers: {
