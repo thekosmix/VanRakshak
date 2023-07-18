@@ -18,11 +18,12 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Loader from './Components/Loader';
-import { server } from '../Config/config';
+import { login, server } from '../Config/config';
+import { getDeviceId, hash } from '../Config/util';
 
 const LoginScreen = ({navigation}) => {
-  const [userEmail, setUserEmail] = useState('');
-  const [userPassword, setUserPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errortext, setErrortext] = useState('');
 
@@ -30,31 +31,28 @@ const LoginScreen = ({navigation}) => {
 
   const handleSubmitPress = () => {
     setErrortext('');
-    if (!userEmail) {
-      alert('Please fill Email');
+    if (!phone) {
+      alert('Please enter Phone');
       return;
     }
-    if (!userPassword) {
-      alert('Please fill Password');
+    if (!password) {
+      alert('Please enter Password');
       return;
     }
     setLoading(true);
-    let dataToSend = {email: userEmail, password: userPassword};
-    let formBody = [];
-    for (let key in dataToSend) {
-      let encodedKey = encodeURIComponent(key);
-      let encodedValue = encodeURIComponent(dataToSend[key]);
-      formBody.push(encodedKey + '=' + encodedValue);
-    }
-    formBody = formBody.join('&');
+    let dataToSend = {
+      phoneNumber: phone, 
+      password: hash(password), 
+      deviceId: getDeviceId()
+    };
 
-    fetch(server, {
+    fetch(server+login, {
       method: 'POST',
-      body: formBody,
+      body: JSON.stringify(dataToSend),
       headers: {
         //Header Defination
         'Content-Type':
-        'application/x-www-form-urlencoded;charset=UTF-8',
+        'application/json;charset=UTF-8',
       },
     })
       .then((response) => response.json())
@@ -63,13 +61,16 @@ const LoginScreen = ({navigation}) => {
         setLoading(false);
         console.log(responseJson);
         // If server response message same as Data Matched
-        if (responseJson.status === 'success') {
-          AsyncStorage.setItem('user_id', responseJson.data.email);
-          console.log(responseJson.data.email);
+        if (responseJson.status === 0) {
+          AsyncStorage.setItem('id', responseJson.user.id);
+          AsyncStorage.setItem('name', responseJson.user.name);
+          AsyncStorage.setItem('at', responseJson.user.at);
+          AsyncStorage.setItem('role', responseJson.user.role);
+          console.log(responseJson.user);
           navigation.replace('DrawerNavigationRoutes');
         } else {
           setErrortext(responseJson.msg);
-          console.log('Please check your email id or password');
+          console.log('Please check your phone or password');
         }
       })
       .catch((error) => {
@@ -106,12 +107,12 @@ const LoginScreen = ({navigation}) => {
               <TextInput
                 style={styles.inputStyle}
                 onChangeText={(UserEmail) =>
-                  setUserEmail(UserEmail)
+                  setPhone(UserEmail)
                 }
-                placeholder="Enter Email" //dummy@abc.com
+                placeholder="Enter Phone number" //dummy@abc.com
                 placeholderTextColor="#8b9cb5"
                 autoCapitalize="none"
-                keyboardType="email-address"
+                keyboardType="numeric"
                 returnKeyType="next"
                 onSubmitEditing={() =>
                   passwordInputRef.current &&
@@ -125,7 +126,7 @@ const LoginScreen = ({navigation}) => {
               <TextInput
                 style={styles.inputStyle}
                 onChangeText={(UserPassword) =>
-                  setUserPassword(UserPassword)
+                  setPassword(UserPassword)
                 }
                 placeholder="Enter Password" //12345
                 placeholderTextColor="#8b9cb5"
