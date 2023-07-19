@@ -1,7 +1,3 @@
-// Example of Splash, Login and Sign Up in React Native
-// https://aboutreact.com/react-native-login-and-signup/
-
-// Import React and Component
 import React, {useState, createRef} from 'react';
 import {
   StyleSheet,
@@ -59,8 +55,6 @@ const RegisterScreen = (props) => {
       role: "FIELD",
       deviceId: getDeviceId()
     };
-
-    console.log(dataToSend);
 
     fetch(server+register, {
       method: 'POST',

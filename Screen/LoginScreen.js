@@ -1,7 +1,3 @@
-// Example of Splash, Login and Sign Up in React Native
-// https://aboutreact.com/react-native-login-and-signup/
-
-// Import React and Component
 import React, {useState, createRef} from 'react';
 import {
   StyleSheet,
@@ -19,7 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Loader from './Components/Loader';
 import { login, server } from '../Config/config';
-import { getDeviceId, hash } from '../Config/util';
+import { getDeviceId, hash, getAPIHeaders, setData } from '../Config/util';
 
 const LoginScreen = ({navigation}) => {
   const [phone, setPhone] = useState('');
@@ -46,14 +42,12 @@ const LoginScreen = ({navigation}) => {
       deviceId: getDeviceId()
     };
 
+    const headers = getAPIHeaders()
+
     fetch(server+login, {
       method: 'POST',
       body: JSON.stringify(dataToSend),
-      headers: {
-        //Header Defination
-        'Content-Type':
-        'application/json;charset=UTF-8',
-      },
+      headers: headers
     })
       .then((response) => response.json())
       .then((responseJson) => {
@@ -62,11 +56,7 @@ const LoginScreen = ({navigation}) => {
         console.log(responseJson);
         // If server response message same as Data Matched
         if (responseJson.status === 0) {
-          AsyncStorage.setItem('id', responseJson.user.id);
-          AsyncStorage.setItem('name', responseJson.user.name);
-          AsyncStorage.setItem('at', responseJson.user.at);
-          AsyncStorage.setItem('role', responseJson.user.role);
-          console.log(responseJson.user);
+          setData(responseJson.user)
           navigation.replace('DrawerNavigationRoutes');
         } else {
           setErrortext(responseJson.msg);
