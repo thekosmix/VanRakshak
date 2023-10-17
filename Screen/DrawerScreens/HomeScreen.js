@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View, 
   Text, 
@@ -13,24 +13,29 @@ import {
   TextInput,
 } from 'react-native';
 import { getLoginHeaders } from '../../Config/util';
-import { activities, server } from '../../Config/config';
+import { userApis, server } from '../../Config/config';
 
 const HomeScreen = ({navigation}) => {
 
-  const clickHandler = () => {
-    //function to handle click on floating Action Button
-    alert('Floating Button Clicked');
-  };
 
   const [modalVisible, setModalVisible] = useState(false);
   const [activityDescription, setActivityDescription] = useState('');
   const [errortext, setErrortext] = useState('');
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    // Update the document title using the browser API
+    
+  });
+  const closeModal = () => {
+    navigation.replace('DrawerNavigationRoutes');
+    setLoading(false);
+  };
+
   const submitActivity = () => {
     setErrortext('');
     if (!activityDescription) {
-      alert('Please description');
+      alert('Please add description');
       return;
     }
 
@@ -44,7 +49,7 @@ const HomeScreen = ({navigation}) => {
     getLoginHeaders().then(
       obj => {
         const headers = obj
-        fetch(server+activities, {
+        fetch(server+userApis.activities, {
           method: 'POST',
           body: JSON.stringify(dataToSend),
           headers: headers
@@ -111,6 +116,11 @@ const HomeScreen = ({navigation}) => {
               style={[styles.button, styles.buttonClose]}
               onPress={() => submitActivity()}>
               <Text style={styles.textStyle}>Post</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => closeModal()}>
+              <Text style={styles.textStyle}>Close</Text>
             </Pressable>
           </View>
         </View>
@@ -196,10 +206,11 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
   modalView: {
-    margin: 20,
+    height: 100,
+    width: 250,
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 35,
+    padding: 15,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -232,11 +243,11 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     flex: 1,
-    color: 'white',
+    width: 200,
     paddingLeft: 15,
     paddingRight: 15,
     borderWidth: 1,
-    borderRadius: 30,
+    borderRadius: 10,
     borderColor: '#dadae8',
   },
 });

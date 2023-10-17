@@ -14,7 +14,7 @@ import {
  import { hash, getDeviceId } from '../Config/util';
 
 import Loader from './Components/Loader';
-import { register, server } from '../Config/config';
+import { userApis, server } from '../Config/config';
 
 const RegisterScreen = (props) => {
   const [name, setName] = useState('');
@@ -56,7 +56,7 @@ const RegisterScreen = (props) => {
       deviceId: getDeviceId()
     };
 
-    fetch(server+register, {
+    fetch(server+userApis.register, {
       method: 'POST',
       body: JSON.stringify(dataToSend),
       headers: {
@@ -125,7 +125,7 @@ const RegisterScreen = (props) => {
         }}>
         <View style={{alignItems: 'center'}}>
           <Image
-            source={require('../Image/aboutreact.png')}
+            source={require('../Image/rakshak.png')}
             style={{
               width: '50%',
               height: 100,

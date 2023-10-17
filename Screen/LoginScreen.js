@@ -14,7 +14,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Loader from './Components/Loader';
-import { login, server } from '../Config/config';
+import { userApis, server } from '../Config/config';
 import { getDeviceId, hash, getAPIHeaders, setData } from '../Config/util';
 
 const LoginScreen = ({navigation}) => {
@@ -44,7 +44,7 @@ const LoginScreen = ({navigation}) => {
 
     const headers = getAPIHeaders()
 
-    fetch(server+login, {
+    fetch(server+userApis.login, {
       method: 'POST',
       body: JSON.stringify(dataToSend),
       headers: headers
@@ -84,7 +84,7 @@ const LoginScreen = ({navigation}) => {
           <KeyboardAvoidingView enabled>
             <View style={{alignItems: 'center'}}>
               <Image
-                source={require('../Image/aboutreact.png')}
+                source={require('../Image/rakshak.png')}
                 style={{
                   width: '50%',
                   height: 100,
